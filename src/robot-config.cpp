@@ -6,10 +6,10 @@ using namespace vex;
 brain Brain;
 
 // Motors
-motor frontRight = motor(PORT1, ratio18_1, false);
+motor frontRight = motor(PORT1, ratio18_1, true);
 motor backRight = motor(PORT2, ratio18_1, false);
 motor backLeft = motor(PORT3, ratio18_1, false);
-motor frontLeft = motor(PORT4, ratio18_1, false);
+motor frontLeft = motor(PORT4, ratio18_1, true);
 
 // Sensors
 distance front = distance(PORT11);
@@ -28,4 +28,10 @@ controller mainController = controller(primary);
  */
 void vexcodeInit(void) {
   // Nothing to initialize
+
+  // Motor breaking mode
+  frontRight.setStopping(brake);
+  backRight.setStopping(brake);
+  backLeft.setStopping(brake);
+  frontLeft.setStopping(brake);
 }
