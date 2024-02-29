@@ -11,6 +11,7 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
+#include "math.h"
 
 using namespace vex;
 
@@ -37,14 +38,38 @@ void pre_auton(void) {
   // Example: clearing encoders, setting servo positions, ...
 }
 
+// Angle is the angle to drive on, where 0 is straight forward
+// Speed is the speed to drive at, where 100 is full power and 0 is stopped
+void drive(int angle, int speed) {
+  // Use trig to find digital controller positions
+  // hypoteneus length == speed
+  // hypoteneus leg angle == angle
+
+  // Find x distnace with trig
+  int digitalX = speed * sin(double(angle));
+
+  // Find last leg of triangle with pythag
+  int digitalY = sqrt(pow(speed, 2) - pow(digitalX, 2));
+
+  // I think? Will depend on how the motors are laid out
+  frontRight.setVelocity(-(-digitalX - digitalY), pct);
+  backRight.setVelocity(-(digitalX + digitalY), pct);
+  backLeft.setVelocity(digitalX + digitalY, pct);
+  frontLeft.setVelocity(-digitalX - digitalY, pct);
+
+  // Turn on motors
+  frontRight.spin(forward);
+  backRight.spin(forward);
+  backLeft.spin(forward);
+  frontLeft.spin(forward);
+
+}
+
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
-/*                              Autonomous Task                              */
+/*                            Autonomous Portion                             */
 /*                                                                           */
-/*  This task is used to control your robot during the autonomous phase of   */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
+/*       Used for the autonomous race with the help of drive() above         */
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
@@ -55,37 +80,50 @@ void autonomous(void) {
 
 /*---------------------------------------------------------------------------*/
 /*                                                                           */
-/*                              User Control Task                            */
+/*                                User Control                               */
 /*                                                                           */
-/*  This task is used to control your robot during the user control phase of */
-/*  a VEX Competition.                                                       */
-/*                                                                           */
-/*  You must modify the code to add your own robot specific commands here.   */
+/*            Used for the user controll obstacle course challenge           */
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
   // User control code here, inside the loop
+
   while (1) {
-    // This is the main execution loop for the user control program.
-    // Each time through the loop your program should update motor + servo
-    // values based on feedback from the joysticks.
+    // Compute velocities
+    // forwards, sideways, rotation
+    // x, y, rotation
+    int frontRightSpeed = mainController.Axis3.position() - mainController.Axis4.position() - (mainController.Axis1.position()/2);
+    int backRightSpeed = -mainController.Axis3.position() - mainController.Axis4.position() + (mainController.Axis1.position()/2);
+    int backLeftSpeed = mainController.Axis3.position() - mainController.Axis4.position() + (mainController.Axis1.position()/2);
+    int frontLeftSpeed = -mainController.Axis3.position() - mainController.Axis4.position() - (mainController.Axis1.position()/2);
 
-    // ........................................................................
-    // Insert user code here. This is where you use the joystick values to
-    // update your motors, etc.
-    // ........................................................................
+    // Set velocities
+    frontRight.setVelocity(frontRightSpeed, pct);
+    backRight.setVelocity(backRightSpeed, pct); 
+    backLeft.setVelocity(backLeftSpeed, pct);
+    frontLeft.setVelocity(frontLeftSpeed, pct);
 
-    /* 
-    Example controller access:
-    if (mainController.axis3 > 0) {
-      frontleft
-      Do Something
+    // turn on motors
+    frontRight.spin(forward);
+    backLeft.spin(forward);
+    backRight.spin(forward);
+    frontLeft.spin(forward);
+
+    
+    // Drive Test
+
+    if (mainController.ButtonA.pressing()) {
+      drive(0, 50);
     }
-    */
+    //drive(0, 50);;
 
-   /*
-   frontLeft.speed(axis1-2)
-   */
+    // Motor Test
+    /*
+    frontRight.spin(forward);
+    backRight.spin(forward);
+    backLeft.spin(forward);
+    frontLeft.spin(forward);
+    */
 
     wait(20, msec); // Sleep the task for a short amount of time to
                     // prevent wasted resources.
