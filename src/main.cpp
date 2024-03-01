@@ -11,7 +11,7 @@
 // ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
-#include "math.h"
+#include <cmath>
 
 using namespace vex;
 
@@ -42,20 +42,33 @@ void pre_auton(void) {
 // Speed is the speed to drive at, where 100 is full power and 0 is stopped
 void drive(int angle, int speed) {
   // Use trig to find digital controller positions
+  // Math is available here: https://www.desmos.com/calculator/ljddj1h4ck
   // hypoteneus length == speed
   // hypoteneus leg angle == angle
 
-  // Find x distnace with trig
-  int digitalX = speed * sin(double(angle));
+  double radianAngle = angle * M_PI / 180.0;
 
-  // Find last leg of triangle with pythag
-  int digitalY = sqrt(pow(speed, 2) - pow(digitalX, 2));
+  // Find x distnace with trigonometry
+  int digitalX = speed * sin(radianAngle);
 
-  // I think? Will depend on how the motors are laid out
-  frontRight.setVelocity(-(-digitalX - digitalY), pct);
+  // Square hypoteneus and x vector
+  int speedSquared = speed * speed;
+  int xSquared = digitalX * digitalX;
+
+  // Find last leg of vector triangle with pythagorean theorem
+  int digitalY = speedSquared - xSquared;
+  digitalY = sqrt(digitalY);
+
+  // Adjust for "negative" degrees that should make the robot go backwards
+  if (angle > 90 && angle < 270) {
+    digitalY = -digitalY;
+  }
+
+  // Assign speeds to motors
+  frontRight.setVelocity(-(digitalX - digitalY), pct);
   backRight.setVelocity(-(digitalX + digitalY), pct);
-  backLeft.setVelocity(digitalX + digitalY, pct);
-  frontLeft.setVelocity(-digitalX - digitalY, pct);
+  backLeft.setVelocity(-(digitalX - digitalY), pct);
+  frontLeft.setVelocity(-(digitalX + digitalY), pct);
 
   // Turn on motors
   frontRight.spin(forward);
