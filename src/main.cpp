@@ -123,7 +123,19 @@ void usercontrol(void) {
     frontLeft.spin(forward);
 
     
-    // Drive Test
+    // drive() function test, can also be used during user controll
+    if (mainController.ButtonX.pressing()) {
+      // angle, speed
+      drive(0, 100);
+
+    } else if (mainController.ButtonA.pressing()) {
+      drive(90, 100);
+
+    } else if (mainController.ButtonB.pressing()) {
+      drive(180, 100);
+
+    } else if (mainController.ButtonY.pressing()) {
+      drive(270, 100);
 
     if (mainController.ButtonA.pressing()) {
       drive(0, 50);
