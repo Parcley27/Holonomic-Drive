@@ -12,10 +12,10 @@ motor backLeft = motor(PORT3, ratio18_1, false);
 motor frontLeft = motor(PORT4, ratio18_1, true);
 
 // Sensors
-distance front = distance(PORT11);
-distance right = distance(PORT12);
-distance back = distance(PORT13);
-distance left = distance(PORT14);
+distance frontDistance = distance(PORT11);
+distance rightDistance = distance(PORT12);
+distance backDistance = distance(PORT13);
+distance leftDistance = distance(PORT14);
 
 // Controller
 controller mainController = controller(primary);

@@ -10,10 +10,10 @@ extern motor backLeft;
 extern motor frontLeft;
 
 // Include sensors or main.cpp
-extern distance front;
-extern distance right;
-extern distance back;
-extern distance left;
+extern distance frontDistance;
+extern distance rightDistance;
+extern distance backDistance;
+extern distance leftDistance;
 
 // Include controller for main.cpp
 extern controller mainController;
