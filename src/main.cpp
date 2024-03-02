@@ -86,9 +86,44 @@ void drive(int angle, int speed) {
 /*---------------------------------------------------------------------------*/
 
 void autonomous(void) {
-  // ..........................................................................
-  // Insert autonomous user code here.
-  // ..........................................................................
+  // Repeat forever
+  while (true) {
+    // Basic autonomous logic is as follows:
+    // Go straight until next angle is less than 200mm away, then turn 45 degrees
+    // Then go until the next wall is less than 100mm away, then turn another 45 degrees, then repeat
+
+    // Set speed for autonomous portion
+    // Can be from 0 ... 100
+    const int speed = 50;
+
+    // Will change through the loop to find robot heading
+    // In degrees where 0 == straight forward
+    int direction = 0;
+
+    // Create array with robot sensors
+    // Can be iterated through to use the right sensor at the rigt time
+    distance sensor[4] = {frontDistance, rightDistance, backDistance, leftDistance};
+
+    // Loop 4 times
+    for (int i = 0; i < 4; i++) {
+
+      // Prevent over 360
+      direction = i * 90;
+
+      // Drive until the sensor is less that 200mm away from an object
+      while (sensor[i].objectDistance(mm) > 300) {
+        drive(direction, speed);
+      }
+
+      // Change drive direction by 45 degrees
+      direction += 45;
+
+      // Drive until the sensor is less than 100mm away from an object
+      while (sensor[i].objectDistance(mm) > 150) {
+        drive(direction, speed);
+      }
+    }
+  }
 }
 
 /*---------------------------------------------------------------------------*/
@@ -142,6 +177,11 @@ void usercontrol(void) {
     }
     //drive(0, 50);;
 
+    // autonomous() function test, should not be used during user controll competition
+    if (mainController.ButtonRight.pressing()) {
+      autonomous();
+    }
+    
     // Motor Test
     /*
     frontRight.spin(forward);
