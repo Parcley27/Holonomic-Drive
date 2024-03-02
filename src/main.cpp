@@ -1,9 +1,9 @@
 /*----------------------------------------------------------------------------*/
 /*                                                                            */
 /*    Module:       main.cpp                                                  */
-/*    Author:       VEX                                                       */
-/*    Created:      Thu Sep 26 2019                                           */
-/*    Description:  Competition Template                                      */
+/*    Author:       Pierce O and Luca B                                       */
+/*    Created:      February 26, 2024                                         */
+/*    Description:  Holonomic drive program for a VEX drivetrain competition  */
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
