@@ -21,17 +21,12 @@ distance leftDistance = distance(PORT14);
 controller mainController = controller(primary);
 
 
-/**
- * Used to initialize code/tasks/devices added using tools in VEXcode Pro.
- *
- * This should be called at the start of your int main function.
- */
+// Called from main.cpp
+// Used to set motor stopping mode
 void vexcodeInit(void) {
-  // Nothing to initialize
-
-  // Motor breaking mode
   frontRight.setStopping(brake);
   backRight.setStopping(brake);
   backLeft.setStopping(brake);
   frontLeft.setStopping(brake);
+  
 }

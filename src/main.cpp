@@ -7,35 +7,27 @@
 /*                                                                            */
 /*----------------------------------------------------------------------------*/
 
-// ---- START VEXCODE CONFIGURED DEVICES ----
-// ---- END VEXCODE CONFIGURED DEVICES ----
 
 #include "vex.h"
+
+// include cmath for trigonometry in drive()
 #include <cmath>
 
 using namespace vex;
 
-// A global instance of competition
+// Global instance of competition
 competition Competition;
-
-// define your global instances of motors and other devices here
 
 /*---------------------------------------------------------------------------*/
 /*                          Pre-Autonomous Functions                         */
 /*                                                                           */
-/*  You may want to perform some actions before the competition starts.      */
-/*  Do them in the following function.  You must return from this function   */
-/*  or the autonomous and usercontrol tasks will not be started.  This       */
-/*  function is only called once after the V5 has been powered on and        */
-/*  not every time that the robot is disabled.                               */
+/*                   Run vexcodeInit to set motor directions                 */
 /*---------------------------------------------------------------------------*/
 
 void pre_auton(void) {
   // Initializing Robot Configuration. DO NOT REMOVE!
   vexcodeInit();
 
-  // All activities that occur before the competition starts
-  // Example: clearing encoders, setting servo positions, ...
 }
 
 // Angle is the angle to drive on, where 0 is straight forward
@@ -46,6 +38,12 @@ void drive(int angle, int speed) {
   // hypoteneus length == speed
   // hypoteneus leg angle == angle
 
+  // Correct for angles equal to or greater than a full circle
+  if (angle >= 360) {
+    angle = 0;
+  }
+
+  // Convert to radians
   double radianAngle = angle * M_PI / 180.0;
 
   // Find x distnace with trigonometry
@@ -134,33 +132,31 @@ void autonomous(void) {
 /*---------------------------------------------------------------------------*/
 
 void usercontrol(void) {
-  // User control code here, inside the loop
-
   while (1) {
-    // Compute velocities
-    // forwards, sideways, rotation
-    // x, y, rotation
+    // Calculate the correct speed for each motor
+    // Forwards speed +- Horizontal speed +- Rotation speed (depends on motor position and orientation)
     int frontRightSpeed = mainController.Axis3.position() - mainController.Axis4.position() - (mainController.Axis1.position()/2);
     int backRightSpeed = -mainController.Axis3.position() - mainController.Axis4.position() + (mainController.Axis1.position()/2);
     int backLeftSpeed = mainController.Axis3.position() - mainController.Axis4.position() + (mainController.Axis1.position()/2);
     int frontLeftSpeed = -mainController.Axis3.position() - mainController.Axis4.position() - (mainController.Axis1.position()/2);
 
-    // Set velocities
+    // Write velocites to motors
     frontRight.setVelocity(frontRightSpeed, pct);
     backRight.setVelocity(backRightSpeed, pct); 
     backLeft.setVelocity(backLeftSpeed, pct);
     frontLeft.setVelocity(frontLeftSpeed, pct);
 
-    // turn on motors
+    // Ensure the motors are on
     frontRight.spin(forward);
     backLeft.spin(forward);
     backRight.spin(forward);
     frontLeft.spin(forward);
 
     
-    // drive() function test, can also be used during user controll
+    // drive() function test, but can also be used during user controll competition
+    // Direction is matched with letter button positions on the controller
     if (mainController.ButtonX.pressing()) {
-      // angle, speed
+      // heading, speed
       drive(0, 100);
 
     } else if (mainController.ButtonA.pressing()) {
@@ -172,10 +168,7 @@ void usercontrol(void) {
     } else if (mainController.ButtonY.pressing()) {
       drive(270, 100);
 
-    if (mainController.ButtonA.pressing()) {
-      drive(0, 50);
     }
-    //drive(0, 50);;
 
     // autonomous() function test, should not be used during user controll competition
     if (mainController.ButtonRight.pressing()) {
@@ -190,23 +183,23 @@ void usercontrol(void) {
     frontLeft.spin(forward);
     */
 
-    wait(20, msec); // Sleep the task for a short amount of time to
-                    // prevent wasted resources.
+    // Sleep the task for a short amount of time to prevent wasted resources.
+    wait(20, msec);
+
   }
 }
 
-//
-// Main will set up the competition functions and callbacks.
-//
+// Main function where everything happens inside
 int main() {
-  // Set up callbacks for autonomous and driver control periods.
+  // Set up callbacks for autonomous and driver control periods
+  // Allows the robot to be controlled with the competition controller
   Competition.autonomous(autonomous);
   Competition.drivercontrol(usercontrol);
 
-  // Run the pre-autonomous function.
+  // Run pre autonamous function for robot initialization
   pre_auton();
 
-  // Prevent main from exiting with an infinite loop.
+  // Run main forever
   while (true) {
     wait(100, msec);
   }
