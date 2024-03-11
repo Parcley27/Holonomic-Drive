@@ -108,16 +108,16 @@ void autonomous(void) {
       // Prevent over 360
       direction = i * 90;
 
-      // Drive until the sensor is less that 200mm away from an object
-      while (sensor[i].objectDistance(mm) > 300) {
+      // Drive until the sensor is less that 250mm away from an object
+      while (sensor[i].objectDistance(mm) > 250) {
         drive(direction, speed);
       }
 
       // Change drive direction by 45 degrees
       direction += 45;
 
-      // Drive until the sensor is less than 100mm away from an object
-      while (sensor[i].objectDistance(mm) > 150) {
+      // Drive until the sensor is less than 145mm away from an object
+      while (sensor[i].objectDistance(mm) > 145) {
         drive(direction, speed);
       }
     }
